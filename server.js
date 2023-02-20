@@ -7,10 +7,10 @@ app.get("/", function (req, res) {
   res.send("Backend is running successfully....");
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 app.listen(
   PORT,
   console.log(
-    `server is running in ${process.env.NODE_ENV} mode  on port ${PORT}`
+    `server is running on port ${PORT}`
   )
 );
