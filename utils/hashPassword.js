@@ -4,7 +4,8 @@ const hashPassword = async(plaintextPassword) =>{
    const hash = await bcrypt.hash(plaintextPassword,10);
    return hash;
 }
-const comparePassword = async() =>{
+const comparePassword = async(plaintextPassword,hash) =>{
+    console.log("ash", hash)
     const result = await bcrypt.compare(plaintextPassword, hash);
     return result;
 }
