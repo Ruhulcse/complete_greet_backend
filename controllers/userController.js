@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const knex = require("../db/db");
-// const generateToken = require("../utils/generateToken");
+const generateToken = require("../utils/generateToken");
+const {hashPassword,comparePassword} = require("../utils/hashPassword");
 
 //Login for Users
 const Login = asyncHandler(async (req, res) => {
@@ -21,17 +22,20 @@ const Login = asyncHandler(async (req, res) => {
 
 ////Registration  for Users
 const Registration = asyncHandler(async (req, res) => {
- const {email,first_name, last_name} = req.body;
+ const {email,first_name, last_name, password} = req.body;
  const payload = {
     email,
     first_name,
-    last_name
+    last_name,
+    password: await hashPassword(password)
  }
   try {
-    const createUser = await knex('users').insert(payload);
+    const createUser = await knex('users').insert(payload).returning('id');
     res.json({
       message: "successfully registration",
-      data: createUser,
+      data: {
+        email
+      },
     });
   } catch (error) {
     console.log(error);

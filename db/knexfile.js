@@ -2,10 +2,9 @@ module.exports = {
     development: {
       client: 'pg',
       connection:  {
-        host: "mahmud.db.elephantsql.com",
-        database: "dyccrzdr",
-        user: "dyccrzdr",
-        password: "rihhes34BSXjgYImtFDRX--s5QIvstsy",
+        database: "Greet",
+        user: "postgres",
+        password: "123",
       },
       pool: {
         min: 2,
