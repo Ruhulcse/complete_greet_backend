@@ -1,10 +1,12 @@
 module.exports = {
     development: {
-      client: 'pg',
+      client: 'mysql',
       connection:  {
-        database: "Greet",
-        user: "postgres",
-        password: "123",
+        host: 'db4free.net',
+        port: 3306,
+        user: 'cgreet7862',
+        password: 'cgreet7862',
+        database: 'cgreet7862'
       },
       pool: {
         min: 2,
