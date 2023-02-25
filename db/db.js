@@ -1,5 +1,5 @@
 const knex = require('knex');
-const knexfile = require('./knexfile');
+const knexfile = require('../knexfile');
 
 // TODO: in prod, don't hardcode db config here
 // but instead pull values in via env vars or

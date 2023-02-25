@@ -1,32 +1,31 @@
-
 module.exports = {
     development: {
-      client: 'pg',
-      connection: {
-        database: process.env.DATABASE_NAME || 'knex-pg-db',
-        user: process.env.POSTGRES_USER || 'postgres',
-        password: process.env.POSTGRES_USER_PW || '<INSERT PASSWORD FOR postgres USER HERE>',
-        port: process.env.POSTGRES_PORT || 5432,
-        host: process.env.POSTGRES_HOST || 'localhost'
+      client: 'mysql',
+      // connection:  {
+      //   database: "Greet",
+      //   user: "postgres",
+      //   password: "123",
+      // },
+      // connection:  {
+      //   host: 'db4free.net',
+      //   port: 3306,
+      //   user: 'cgreet7862',
+      //   password: 'cgreet7862',
+      //   database: 'cgreet7862'
+      // },
+      connection:  {
+        host: 'db4free.net',
+        port: 3306,
+        user: 'sysadmin23',
+        password: 'admin123',
+        database: 'nestjsdb_2023'
+      },
+      pool: {
+        min: 2,
+        max: 10,
       },
       migrations: {
-        directory: './db/migrations'
-      },
-      seeds: {
-        directory: './db/seeds'
+        tableName: 'knex_migrations',
       },
     },
-    production: {
-      client: 'pg',
-      connection: process.env.DATABASE_URL,
-      migrations: {
-        directory: './db/migrations'
-      },
-      seeds: {
-        directory: './db/seeds'
-      },
-      ssl: {
-        rejectUnauthorized: false
-      }
-    }
   };
