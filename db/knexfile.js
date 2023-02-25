@@ -7,11 +7,11 @@ module.exports = {
       //   password: "123",
       // },
       // connection:  {
-      //   host: 'db4free.net',
-      //   port: 3306,
-      //   user: 'cgreet7862',
-      //   password: 'cgreet7862',
-      //   database: 'cgreet7862'
+      //   host: process.env.DB_HOST || 'db4free.net',
+      //   port: process.env.DB_PORT || 3306,
+      //   user: process.env.DB_USER || 'cgreet7862',
+      //   password: process.env.DB_PASSWORD || 'cgreet7862',
+      //   database: process.env.DB_DATABASE || 'cgreet7862'
       // },
       connection:  {
         host: 'db4free.net',

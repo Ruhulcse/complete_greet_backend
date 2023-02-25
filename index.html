@@ -1,20 +1,58 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+   <meta charset="UTF-8" />
+   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <title>Socket IO Chat App</title>
+
+   <!-- Link to CSS file-->
+   <link rel="stylesheet" href="./index.css" />
 </head>
+
 <body>
-   Hello
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js" integrity="sha512-AI5A3zIoeRSEEX9z3Vyir8NqSMC1pY7r5h2cE+9J6FLsoEmSSGLFaqMQw8SWvoONXogkfFrkQiJfLeHLz3+HOg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script>
-            const socket = io('http://localhost:5000');
-            socket.on('greeting-from-server', function (message) {
-                document.body.appendChild(
-                    document.createTextNode(message.greeting)
-                );
-                socket.emit('greeting-from-client', {
-                    greeting: 'Hello Server'
-                });
-            });
-</script>
+   <div id="message-bar">
+      <p id="notification"></p>
+   </div>
+   <form class="container">
+      <h2>Send Messages with Socket.io</h2>
+      <textarea rows="5" width="100%" name="message" id="message" placeholder="Enter your message..."></textarea>
+      <button>SEND MESSAGE</button>
+   </form>
+
+
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js"
+      integrity="sha512-AI5A3zIoeRSEEX9z3Vyir8NqSMC1pY7r5h2cE+9J6FLsoEmSSGLFaqMQw8SWvoONXogkfFrkQiJfLeHLz3+HOg=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+   <script>
+      function printMessage(e) {
+         e.preventDefault();
+         console.log(message.value);
+         socket.emit('message', message.value);
+      }
+      const button = document.querySelector('button');
+      button.addEventListener('click', printMessage);
+      const notify = document.querySelector('#notification');
+      const message = document.querySelector('#message');
+      const messageBar = document.querySelector('#message-bar');
+
+      const socket = io('http://localhost:5000');
+      // socket.on('greeting-from-server', function (message) {
+      //    document.body.appendChild(
+      //       document.createTextNode(message.greeting)
+      //    );
+      //    socket.emit('greeting-from-client', {
+      //       greeting: 'Hello Server'
+      //    });
+      // });
+      socket.on('response', (data) => {
+         notify.textContent = data;
+         messageBar.style.backgroundColor = '#3F4E4F';
+         messageBar.style.height = '20vh';
+         alert('New Message');
+      });
+   </script>
 </body>
+
 </html>
