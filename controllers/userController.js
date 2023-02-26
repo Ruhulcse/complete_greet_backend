@@ -79,30 +79,19 @@ const Registration = asyncHandler(async (req, res) => {
         });
     }
     const createUser = await knex("Users").insert(payload).returning("id");
-    //   let transporter = await nodemailer.createTransport({
-    //     pool: true,
-    //     host: "secure.emailsrvr.com",
-    //     port: 465,
-    //     secure: true, // use TLS
-    //     auth: {
-    //         user: "contact@completegreet.com", // generated ethereal user
-    //         pass: "1212921509Azad",
-    //     },
-
-    // });
-    //   let mailOptions = {
-    //     from: '"Complete Greet" <contact@completegreet.com>',
-    //     to: email,
-    //     subject: "Registration",
-    //     html: RegistrationMailTemplate,
-    //   };
-    //   transporter.sendMail(mailOptions, function (error, info) {
-    //     if (error) {
-    //       console.log(error);
-    //     } else {
-    //       console.log("Email sent: " + info.response);
-    //     }
-    //   });
+      let mailOptions = {
+        from: '"Complete Greet" <contact@completegreet.com>',
+        to: email,
+        subject: "Registration",
+        html: RegistrationMailTemplate,
+      };
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Email sent: " + info.response);
+        }
+      });
     res.status(201).json({
       error: true,
       message: "successfully registration",
