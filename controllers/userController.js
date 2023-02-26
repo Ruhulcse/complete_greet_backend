@@ -2,9 +2,8 @@ const asyncHandler = require("express-async-handler");
 const crypto = require("crypto");
 const knex = require("../db/db");
 const transporter = require("../utils/transporter");
-const nodemailer = require("nodemailer");
 const RegistrationMailTemplate = require("../mail_templates/registrationMail");
-const { hashPassword, comparePassword } = require("../utils/hashPassword");
+const { hashPassword, comparePassword } = require("../helpers/password_hash");
 const jwt = require("../helpers/jwt");
 
 //Login for Users
