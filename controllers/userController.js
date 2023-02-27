@@ -4,7 +4,7 @@ const knex = require("../db/db");
 const transporter = require("../utils/transporter");
 const nodemailer = require("nodemailer");
 const RegistrationMailTemplate = require("../mail_templates/registrationMail");
-const { hashPassword, comparePassword } = require("../utils/hashPassword");
+const { hashPassword, comparePassword } = require("../helpers/password_hash");
 const jwt = require("../helpers/jwt");
 
 //Login for Users
@@ -78,7 +78,7 @@ const Registration = asyncHandler(async (req, res) => {
           data: [],
         });
     }
-    const createUser = await knex("Users").insert(payload).returning("id");
+    const createUser = await knex("Users").insert(payload, 'id');
     //   let transporter = await nodemailer.createTransport({
     //     pool: true,
     //     host: "secure.emailsrvr.com",
