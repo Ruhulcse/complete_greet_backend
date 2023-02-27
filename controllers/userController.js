@@ -1,8 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const crypto = require("crypto");
 const knex = require("../db/db");
-const transporter = require("../utils/transporter");
-const nodemailer = require("nodemailer");
+const { sendMail } = require("../helpers/mail");
 const RegistrationMailTemplate = require("../mail_templates/registrationMail");
 const { hashPassword, comparePassword } = require("../helpers/password_hash");
 const jwt = require("../helpers/jwt");
@@ -12,7 +11,7 @@ const Login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await knex("Users")
-    .select("email", "password")
+    .select("email", "password", "id")
     .first()
     .where("email", email);
   if (!user) {
@@ -27,7 +26,8 @@ const Login = asyncHandler(async (req, res) => {
       .json({ error: true, message: "invalid credential", data: [] });
   }
   const payload = {
-    email: user.email
+    id: user.id,
+    email: user.email,
   };
   const token = await jwt.encode(payload);
   res.json({
@@ -79,19 +79,19 @@ const Registration = asyncHandler(async (req, res) => {
         });
     }
     const createUser = await knex("Users").insert(payload).returning("id");
-      let mailOptions = {
-        from: '"Complete Greet" <contact@completegreet.com>',
-        to: email,
-        subject: "Registration",
-        html: RegistrationMailTemplate,
-      };
-      transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log("Email sent: " + info.response);
-        }
-      });
+
+    let mailOptions = {
+      from: '"Complete Greet" <contact@completegreet.com>',
+      to: email,
+      subject: "Registration",
+      html: RegistrationMailTemplate,
+    };
+    let mailInfo = await sendMail(mailOptions);
+    if (!mailInfo) {
+      throw new ErrorHandler("Mail send failed.", 500);
+    } else {
+      console.log("Email sent: " + mailInfo);
+    }
     res.status(201).json({
       error: true,
       message: "successfully registration",
