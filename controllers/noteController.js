@@ -27,6 +27,11 @@ module.exports.addNote = asyncHandler(async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Something went wrong!!",
+      data: null,
+    });
   }
 });

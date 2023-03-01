@@ -23,6 +23,10 @@ module.exports.authorize = async function (req, res, next) {
   if (!token) {
     return next(new Error("user not authorized"));
   }
+  console.log(token.split('Bearer ').length);
+  if (token.split('Bearer ').length > 1) {
+	  token = token.split('Bearer ')[1];
+  }
   // check token
   const payload = await jwt.decode(token);
   if (!payload)

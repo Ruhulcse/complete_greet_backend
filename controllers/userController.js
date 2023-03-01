@@ -8,35 +8,44 @@ const jwt = require("../helpers/jwt");
 
 //Login for Users
 const Login = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const user = await knex("Users")
-    .select("email", "password", "id")
-    .first()
-    .where("email", email);
-  if (!user) {
-    return res
-      .status(404)
-      .json({ error: true, message: "User not registered", data: [] });
+    const user = await knex("Users")
+      .select("email", "password", "id")
+      .first()
+      .where("email", email);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ error: true, message: "User not registered", data: [] });
+    }
+    const isMatch = await comparePassword(password, user.password);
+    if (!isMatch) {
+      return res
+        .status(401)
+        .json({ error: true, message: "invalid credential", data: [] });
+    }
+    const payload = {
+      id: user.id,
+      email: user.email,
+    };
+    const token = await jwt.encode(payload);
+    res.json({
+      error: false,
+      message: "successfully login",
+      data: {
+        token,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Something went wrong!!",
+      data: null,
+    });
   }
-  const isMatch = await comparePassword(password, user.password);
-  if (!isMatch) {
-    return res
-      .status(401)
-      .json({ error: true, message: "invalid credential", data: [] });
-  }
-  const payload = {
-    id: user.id,
-    email: user.email,
-  };
-  const token = await jwt.encode(payload);
-  res.json({
-    error: false,
-    message: "successfully login",
-    data: {
-      token,
-    },
-  });
 });
 
 ////Registration  for Users
@@ -98,7 +107,11 @@ const Registration = asyncHandler(async (req, res) => {
       data: createUser,
     });
   } catch (error) {
-    console.log(error);
+    res.status(500).json({
+      error: true,
+      message: "Something went wrong!!",
+      data: null,
+    });
   }
 });
 module.exports = {
