@@ -2,28 +2,28 @@ const asyncHandler = require("express-async-handler");
 const knex = require("../db/db");
 const { makeid } = require("../helpers/common");
 
-// Add note
-module.exports.addNote = asyncHandler(async (req, res) => {
+// Add bug
+module.exports.addBug = asyncHandler(async (req, res) => {
   try {
     const { body, user } = req;
-    if (body.NoteText !== "") {
+    if (body.BugText !== "") {
       const payload = {
-        NoteText: body.NoteText,
-        NoteCode: makeid(7),
+        BugText: body.BugText,
+        BugCode: makeid(7),
         UserId: user.user_id,
         isDeleted: 0,
       };
-      const note = await knex("Notes").insert(payload);
-      if (!note) {
+      const bug = await knex("Bugs").insert(payload);
+      if (!bug) {
         return res
           .status(400)
-          .json({ error: true, message: "Note Add Failed!", data: [] });
+          .json({ error: true, message: "Bug Add Failed!", data: [] });
       }
 
       res.json({
         error: false,
-        message: "Note Added Successfully",
-        data: note,
+        message: "Bug Added Successfully",
+        data: bug,
       });
     }
   } catch (error) {
@@ -36,26 +36,26 @@ module.exports.addNote = asyncHandler(async (req, res) => {
   }
 });
 
-// Get All notes
-module.exports.getNote = asyncHandler(async (req, res) => {
+// Get All bugs
+module.exports.getBug = asyncHandler(async (req, res) => {
   try {
     const { user } = req;
-    const notes = await knex("Notes")
+    const bugs = await knex("Bugs")
       .where({
         UserId: user.user_id,
         isDeleted: 0,
       })
       .orderBy("id", "desc");
-    if (!notes) {
+    if (!bugs) {
       return res
         .status(400)
-        .json({ error: true, message: "Note Retrive Failed!", data: [] });
+        .json({ error: true, message: "Bug Retrive Failed!", data: [] });
     }
 
     res.json({
       error: false,
-      message: "Note Retrive Successfully",
-      data: notes,
+      message: "Bug Retrive Successfully",
+      data: bugs,
     });
   } catch (error) {
     console.error(error);
@@ -67,32 +67,32 @@ module.exports.getNote = asyncHandler(async (req, res) => {
   }
 });
 
-// Delete note
-module.exports.deleteNote = asyncHandler(async (req, res) => {
+// Delete bug
+module.exports.deleteBug = asyncHandler(async (req, res) => {
   try {
     const { params, user } = req;
     if (!params.id) {
       return res
         .status(400)
-        .json({ error: true, message: "Note id not provide!", data: [] });
+        .json({ error: true, message: "Bug id not provide!", data: [] });
     }
-    const note = await knex("Notes")
+    const bug = await knex("Bugs")
       .update({
         isDeleted: 1,
-        UserId: user.user_id,
       })
       .where({
         id: params.id,
+        UserId: user.user_id,
       });
-    if (!note) {
+    if (!bug) {
       return res
         .status(400)
-        .json({ error: true, message: "Note Ddelete Failed!", data: [] });
+        .json({ error: true, message: "Bug Ddelete Failed!", data: [] });
     }
 
     res.json({
       error: false,
-      message: "Note Delete Successfully",
+      message: "Bug Delete Successfully",
       data: params.id,
     });
   } catch (error) {

@@ -1,8 +1,8 @@
 const router = require('express').Router();
-const { addNote } = require("../controllers/noteController");
+const { addNote, getNote, deleteNote } = require("../controllers/noteController");
 
 router.post('/api/v1/add-note', addNote);
-// router.route('/api/v1/get-note').post('');
-// router.route('/api/v1/delete-note').post('');
+router.get('/api/v1/get-note', getNote)
+router.delete('/api/v1/delete-note/:id', deleteNote);
 
 module.exports = router;

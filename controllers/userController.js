@@ -27,7 +27,7 @@ const Login = asyncHandler(async (req, res) => {
         .json({ error: true, message: "invalid credential", data: [] });
     }
     const payload = {
-      id: user.id,
+      user_id: user.id,
       email: user.email,
     };
     const token = await jwt.encode(payload);
