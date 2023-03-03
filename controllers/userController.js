@@ -6,8 +6,8 @@ const RegistrationMailTemplate = require("../mail_templates/registrationMail");
 const { hashPassword, comparePassword } = require("../helpers/password_hash");
 const jwt = require("../helpers/jwt");
 
-//Login for Users
-const Login = asyncHandler(async (req, res) => {
+// Login for Users
+module.exports.login = asyncHandler(async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -48,8 +48,8 @@ const Login = asyncHandler(async (req, res) => {
   }
 });
 
-////Registration  for Users
-const Registration = asyncHandler(async (req, res) => {
+// Registration for Users
+module.exports.registration = asyncHandler(async (req, res) => {
   try {
     const {
       Name,
@@ -114,7 +114,32 @@ const Registration = asyncHandler(async (req, res) => {
     });
   }
 });
-module.exports = {
-  Login,
-  Registration,
-};
+
+// Get All users
+module.exports.getUser = asyncHandler(async (req, res) => {
+  try {
+    const { query } = req;
+    const bugs = await knex("Users")
+      .where(query)
+      .orderBy("id", "desc");
+    if (!bugs) {
+      return res
+        .status(400)
+        .json({ error: true, message: "User Retrive Failed!", data: [] });
+    }
+
+    res.json({
+      error: false,
+      message: "User Retrive Successfully",
+      data: bugs,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Something went wrong!!",
+      data: null,
+    });
+  }
+});
+
