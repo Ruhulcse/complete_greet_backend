@@ -6,12 +6,12 @@ const { makeid } = require("../helpers/common");
 module.exports.addNote = asyncHandler(async (req, res) => {
   try {
     const { body, user } = req;
-    if (body.NoteText !== "") {
+    if (body.note_text !== "") {
       const payload = {
-        NoteText: body.NoteText,
-        NoteCode: makeid(7),
-        UserId: user.user_id,
-        isDeleted: 0,
+        note_text: body.note_text,
+        note_code: makeid(7),
+        user_id: user.user_id,
+        is_deleted: 0,
       };
       const note = await knex("Notes").insert(payload);
       if (!note) {
@@ -42,8 +42,8 @@ module.exports.getNote = asyncHandler(async (req, res) => {
     const { user } = req;
     const notes = await knex("Notes")
       .where({
-        UserId: user.user_id,
-        isDeleted: 0,
+        user_id: user.user_id,
+        is_deleted: 0,
       })
       .orderBy("id", "desc");
     if (!notes) {
@@ -78,8 +78,8 @@ module.exports.deleteNote = asyncHandler(async (req, res) => {
     }
     const note = await knex("Notes")
       .update({
-        isDeleted: 1,
-        UserId: user.user_id,
+        is_deleted: 1,
+        user_id: user.user_id,
       })
       .where({
         id: params.id,

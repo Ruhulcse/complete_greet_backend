@@ -6,12 +6,12 @@ const { makeid } = require("../helpers/common");
 module.exports.addBug = asyncHandler(async (req, res) => {
   try {
     const { body, user } = req;
-    if (body.BugText !== "") {
+    if (body.bug_text !== "") {
       const payload = {
-        BugText: body.BugText,
-        BugCode: makeid(7),
-        UserId: user.user_id,
-        isDeleted: 0,
+        bug_text: body.bug_text,
+        bug_code: makeid(7),
+        user_id: user.user_id,
+        is_deleted: 0,
       };
       const bug = await knex("Bugs").insert(payload);
       if (!bug) {
@@ -42,8 +42,8 @@ module.exports.getBug = asyncHandler(async (req, res) => {
     const { user } = req;
     const bugs = await knex("Bugs")
       .where({
-        UserId: user.user_id,
-        isDeleted: 0,
+        user_id: user.user_id,
+        is_deleted: 0,
       })
       .orderBy("id", "desc");
     if (!bugs) {
@@ -78,11 +78,11 @@ module.exports.deleteBug = asyncHandler(async (req, res) => {
     }
     const bug = await knex("Bugs")
       .update({
-        isDeleted: 1,
+        is_deleted: 1,
       })
       .where({
         id: params.id,
-        UserId: user.user_id,
+        user_id: user.user_id,
       });
     if (!bug) {
       return res

@@ -52,30 +52,31 @@ module.exports.login = asyncHandler(async (req, res) => {
 module.exports.registration = asyncHandler(async (req, res) => {
   try {
     const {
-      Name,
+      name,
       email,
       password,
-      BusinessName,
-      WebsiteURL,
-      Industry,
-      Goals,
+      business_name,
+      website_url,
+      industry,
+      goals,
     } = req.body;
     const payload = {
-      Name,
+      name,
       email,
-      BusinessName,
-      WebsiteURL,
-      Industry,
-      Goals,
-      isEnrolled: 0,
-      Banned: 0,
-      Verified: 0,
-      GreetMsg: "Hey, thanks for visiting! Feel free to ask anything.",
-      VerifyCode: crypto.randomBytes(5).toString("hex"),
+      business_name,
+      website_url,
+      industry,
+      goals,
+      is_enrolled: 0,
+      banned: 0,
+      verified: 0,
+      greet_msg: "Hey, thanks for visiting! Feel free to ask anything.",
+      verify_code: crypto.randomBytes(5).toString("hex"),
       password: await hashPassword(password),
-    };
+    };      
+
     isUserExist = await knex("Users")
-      .select("Name")
+      .select("name")
       .first()
       .where("email", email);
     if (isUserExist) {
@@ -87,20 +88,21 @@ module.exports.registration = asyncHandler(async (req, res) => {
           data: [],
         });
     }
-    const createUser = await knex("Users").insert(payload).returning("id");
+    const createUser = await knex("Users").insert(payload);
+    console.log("🚀 ~ file: userController.js:92 ~ module.exports.registration=asyncHandler ~ createUser:", createUser)
 
-    let mailOptions = {
-      from: '"Complete Greet" <contact@completegreet.com>',
-      to: email,
-      subject: "Registration",
-      html: RegistrationMailTemplate,
-    };
-    let mailInfo = await sendMail(mailOptions);
-    if (!mailInfo) {
-      throw new ErrorHandler("Mail send failed.", 500);
-    } else {
-      console.log("Email sent: " + mailInfo);
-    }
+    // let mailOptions = {
+    //   from: '"Complete Greet" <contact@completegreet.com>',
+    //   to: email,
+    //   subject: "Registration",
+    //   html: RegistrationMailTemplate,
+    // };
+    // let mailInfo = await sendMail(mailOptions);
+    // if (!mailInfo) {
+    //   throw new ErrorHandler("Mail send failed.", 500);
+    // } else {
+    //   console.log("Email sent: " + mailInfo);
+    // }
     res.status(201).json({
       error: true,
       message: "successfully registration",
