@@ -1,26 +1,27 @@
 const asyncHandler = require("express-async-handler");
 const knex = require("../db/db");
 
-// Add visitor
-module.exports.addVisitor = asyncHandler(async (req, res) => {
+// Add subscriber
+module.exports.addSubscriber = asyncHandler(async (req, res) => {
   try {
     const { body, user } = req;
-    console.log("🚀 ~ file: visitorController.js:9 ~ module.exports.addVisitor=asyncHandler ~ body:", body)
     const payload = {
       ...body,
       user_id: user.user_id,
+      is_active: 1,
+      is_finished: 0,
     };
-    const visitor = await knex("Visitors").insert(payload);
-    if (!visitor) {
+    const subscriber = await knex("Subscribers").insert(payload);
+    if (!subscriber) {
       return res
         .status(400)
-        .json({ error: true, message: "Visitor Add Failed!", data: [] });
+        .json({ error: true, message: "Subscriber Add Failed!", data: [] });
     }
 
     res.json({
       error: false,
-      message: "Visitor Added Successfully",
-      data: visitor,
+      message: "Subscriber Added Successfully",
+      data: subscriber,
     });
   } catch (error) {
     console.error(error);
@@ -32,25 +33,25 @@ module.exports.addVisitor = asyncHandler(async (req, res) => {
   }
 });
 
-// Get All visitors
-module.exports.getVisitor = asyncHandler(async (req, res) => {
+// Get All bugs
+module.exports.getSubscriber = asyncHandler(async (req, res) => {
   try {
     const { user } = req;
-    const visitors = await knex("Visitors")
+    const bugs = await knex("Subscribers")
       .where({
-        user_id: user.user_id,
+        is_active: 1,
       })
       .orderBy("id", "desc");
-    if (!visitors) {
+    if (!bugs) {
       return res
         .status(400)
-        .json({ error: true, message: "Visitor Retrive Failed!", data: [] });
+        .json({ error: true, message: "Subscriber Retrive Failed!", data: [] });
     }
 
     res.json({
       error: false,
-      message: "Visitor Retrive Successfully",
-      data: visitors,
+      message: "Subscriber Retrive Successfully",
+      data: bugs,
     });
   } catch (error) {
     console.error(error);
@@ -62,30 +63,31 @@ module.exports.getVisitor = asyncHandler(async (req, res) => {
   }
 });
 
-// Delete visitor
-module.exports.deleteVisitor = asyncHandler(async (req, res) => {
+// Delete subscriber
+module.exports.deleteSubscriber = asyncHandler(async (req, res) => {
   try {
     const { params, user } = req;
     if (!params.id) {
       return res
         .status(400)
-        .json({ error: true, message: "Visitor id not provide!", data: [] });
+        .json({ error: true, message: "Subscriber id not provide!", data: [] });
     }
-    const visitor = await knex("Visitors")
-      .del()
+    const subscriber = await knex("Subscribers")
+      .update({
+        is_active: 0,
+      })
       .where({
         id: params.id,
-        user_id: user.user_id,
       });
-    if (!visitor) {
+    if (!subscriber) {
       return res
         .status(400)
-        .json({ error: true, message: "Visitor Ddelete Failed!", data: [] });
+        .json({ error: true, message: "Subscriber Ddelete Failed!", data: [] });
     }
 
     res.json({
       error: false,
-      message: "Visitor Delete Successfully",
+      message: "Subscriber Delete Successfully",
       data: params.id,
     });
   } catch (error) {
