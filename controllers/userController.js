@@ -73,7 +73,7 @@ module.exports.registration = asyncHandler(async (req, res) => {
       greet_msg: "Hey, thanks for visiting! Feel free to ask anything.",
       verify_code: crypto.randomBytes(5).toString("hex"),
       password: await hashPassword(password),
-    };      
+    };
 
     isUserExist = await knex("Users")
       .select("name")
@@ -89,25 +89,124 @@ module.exports.registration = asyncHandler(async (req, res) => {
         });
     }
     const createUser = await knex("Users").insert(payload);
-    console.log("🚀 ~ file: userController.js:92 ~ module.exports.registration=asyncHandler ~ createUser:", createUser)
-
-    // let mailOptions = {
-    //   from: '"Complete Greet" <contact@completegreet.com>',
-    //   to: email,
-    //   subject: "Registration",
-    //   html: RegistrationMailTemplate,
-    // };
-    // let mailInfo = await sendMail(mailOptions);
-    // if (!mailInfo) {
-    //   throw new ErrorHandler("Mail send failed.", 500);
-    // } else {
-    //   console.log("Email sent: " + mailInfo);
-    // }
     res.status(201).json({
-      error: true,
+      error: false,
       message: "successfully registration",
       data: createUser,
     });
+  } catch (error) {
+    res.status(500).json({
+      error: true,
+      message: "Something went wrong!!",
+      data: null,
+    });
+  }
+});
+
+// Forgot Password for Users
+module.exports.forgotPassword = asyncHandler(async (req, res) => {
+  try {
+    const { body } = req;
+
+    const user = await knex("Users")
+      .select("id", "email")
+      .first()
+      .where("email", body.email);
+    if (!user) {
+      return res.status(400).json({
+        error: true,
+        message: "User with this email not exists.",
+        data: [],
+      });
+    }
+    const payload = {
+      user_id: user.id,
+      email: user.email,
+    };
+    const token = await jwt.encode(payload);
+    const url = process.env.CLIENT_BASE_URL || "http://localhost:4000";
+    let mailOptions = {
+      from: `Complete Greet <alicia.leffler17@ethereal.email>`,
+      to: body.email,
+      subject: `The subject goes here`,
+      html: `<h2>Please click on given link to reset your password.</h2>
+              <p>${url}/reset-password/${token}</p>`,
+    };
+
+    const updateUser = await knex("Users")
+      .update({ pass_reset: token })
+      .where("email", body.email);
+    if (!updateUser) {
+      return res.status(400).json({
+        error: true,
+        message: "Reset password link error.",
+        data: null,
+      });
+    } else {
+      let mailInfo = await sendMail(mailOptions);
+      console.log(
+        "🚀 ~ file: userController.js:164 ~ module.exports.forgotPassword=asyncHandler ~ mailInfo:",
+        mailInfo
+      );
+      if (!mailInfo) {
+        return res.status(400).json({
+          error: true,
+          message: "Mail send failed.",
+          data: null,
+        });
+      }
+      return res.status(200).json({
+        error: false,
+        message: "Mail send successfully.",
+        data: token,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      error: true,
+      message: "Something went wrong!!",
+      data: null,
+    });
+  }
+});
+
+// Reset Password for Users
+module.exports.resetPassword = asyncHandler(async (req, res) => {
+  try {
+    const { new_password, confirm_password, reset_link } = req.body;
+    if (new_password !== confirm_password) {
+      res.status(400).json({
+        error: true,
+        message: "Password not match!.",
+        data: null,
+      });
+    }
+    const hashPass = await hashPassword(new_password);
+    if (reset_link) {
+      const tokenData = await jwt.decode(reset_link);
+      if (!tokenData) {
+        res.status(400).json({
+          error: true,
+          message: "Invalid reset token!.",
+          data: null,
+        });
+      }
+      let user = await knex("Users")
+      .update({ password: hashPass })
+      .where({ id: tokenData.user_id });
+      if (!user) {
+        res.status(404).json({
+          error: true,
+          message: "User not found.",
+          data: null,
+        });
+      }
+      return res.status(200).json({
+        error: false,
+        message: "Password reset successfully.",
+        data: null,
+      });
+    }
   } catch (error) {
     res.status(500).json({
       error: true,
@@ -121,10 +220,8 @@ module.exports.registration = asyncHandler(async (req, res) => {
 module.exports.getUser = asyncHandler(async (req, res) => {
   try {
     const { query } = req;
-    const bugs = await knex("Users")
-      .where(query)
-      .orderBy("id", "desc");
-    if (!bugs) {
+    const users = await knex("Users").where(query).orderBy("id", "desc");
+    if (!users) {
       return res
         .status(400)
         .json({ error: true, message: "User Retrive Failed!", data: [] });
@@ -133,7 +230,7 @@ module.exports.getUser = asyncHandler(async (req, res) => {
     res.json({
       error: false,
       message: "User Retrive Successfully",
-      data: bugs,
+      data: users,
     });
   } catch (error) {
     console.error(error);
@@ -144,4 +241,3 @@ module.exports.getUser = asyncHandler(async (req, res) => {
     });
   }
 });
-

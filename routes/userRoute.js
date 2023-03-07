@@ -4,10 +4,14 @@ const {
   registration,
   login,
   getUser,
+  forgotPassword,
+  resetPassword,
 } = require("../controllers/userController");
 
 router.post("/register", registration);
-router.route("/login").post(login);
+router.post("/login", login);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 
 router.get("/api/v1/get-user", getUser);
 
