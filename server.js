@@ -5,10 +5,10 @@ const io = require("socket.io")(server, { cors: { origin: "*" } });
 const cors = require("cors");
 const logger = require("morgan");
 const helmet = require("helmet");
-const errorHandler = require('./middlewares/errors');
-const routes = require('./routes');
-const auth = require('./middlewares/auth');
-// dotenv.config();
+const errorHandler = require("./middlewares/errors");
+const routes = require("./routes");
+const auth = require("./middlewares/auth");
+require("dotenv").config();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -16,9 +16,8 @@ app.use(cors());
 app.use(logger("dev"));
 app.use(helmet());
 app.use(express.json());
-app.use('/api', auth.authorize);
+app.use("/api", auth.authorize);
 app.use(routes);
-// app.use(route)
 app.use(errorHandler);
 
 app.get("/", function (req, res) {
@@ -26,7 +25,10 @@ app.get("/", function (req, res) {
 });
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, console.log(`server listening on http://127.0.0.1:${PORT}`));
+server.listen(
+  PORT,
+  console.log(`server listening on http://127.0.0.1:${PORT}`)
+);
 
 // socket connection
 io.on("connection", function (socket) {
