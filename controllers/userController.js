@@ -1,11 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const crypto = require("crypto");
 const knex = require("../db/db");
-<<<<<<< HEAD
-const transporter = require("../utils/transporter");
-=======
 const { sendMail } = require("../helpers/mail");
->>>>>>> 872d7378f661d0e998d0cb59423db7e9b0181509
 const RegistrationMailTemplate = require("../mail_templates/registrationMail");
 const { hashPassword, comparePassword } = require("../helpers/password_hash");
 const jwt = require("../helpers/jwt");
