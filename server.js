@@ -6,6 +6,7 @@ const cors = require("cors");
 const logger = require("morgan");
 const helmet = require("helmet");
 const userRoutes = require("./routes/userRoute");
+const bubbleRoutes = require('./routes/bubbleRoute')
 const errorHandler = require('./middlewares/errors');
 // dotenv.config();
 
@@ -22,6 +23,7 @@ app.get("/", function (req, res) {
   res.send("Backend is running successfully....");
 });
 app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/bubble", bubbleRoutes);
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, console.log(`server listening on http://127.0.0.1:${PORT}`));
