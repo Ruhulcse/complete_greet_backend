@@ -3,7 +3,11 @@ const crypto = require("crypto");
 const knex = require("../db/db");
 const { sendMail } = require("../helpers/mail");
 const RegistrationMailTemplate = require("../mail_templates/registrationMail");
-const { hashPassword, comparePassword } = require("../helpers/password_hash");
+const {
+  hashPassword,
+  comparePassword,
+  checkPasswordFormat,
+} = require("../helpers/password_hash");
 const jwt = require("../helpers/jwt");
 
 // Login for Users
@@ -60,6 +64,14 @@ module.exports.registration = asyncHandler(async (req, res) => {
       industry,
       goals,
     } = req.body;
+
+    if (!checkPasswordFormat(password)) {
+      res.status(500).json({
+        error: true,
+        message: "Please fillup all criteria of password!",
+        data: null,
+      });
+    }
     const payload = {
       name,
       email,
@@ -89,12 +101,35 @@ module.exports.registration = asyncHandler(async (req, res) => {
         });
     }
     const createUser = await knex("Users").insert(payload);
+    const date = new Date();
+    const end_subscribe_date = new Date(date.setMonth(date.getMonth() + 1));
+    const subscriberPayload = {
+      pname: "Free",
+      pcode: "CGBasicPType",
+      subscriber: name,
+      subscriber_id: createUser[0],
+      price: 0,
+      duration: 1,
+      current_month: 1,
+      end_subscribe_date,
+      plan_id: 1,
+      user_id: createUser[0],
+      is_active: 1,
+      is_finished: 0,
+    };
+    const subscriber = await knex("Subscribers").insert(subscriberPayload);
+    if (!subscriber) {
+      return res
+        .status(400)
+        .json({ error: true, message: "Subscriber Add Failed!", data: [] });
+    }
     res.status(201).json({
       error: false,
       message: "successfully registration",
-      data: createUser,
+      data: { createUser, subscriberPayload },
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       error: true,
       message: "Something went wrong!!",
@@ -162,6 +197,7 @@ module.exports.forgotPassword = asyncHandler(async (req, res) => {
       });
     }
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       error: true,
       message: "Something went wrong!!",
@@ -192,8 +228,8 @@ module.exports.resetPassword = asyncHandler(async (req, res) => {
         });
       }
       let user = await knex("Users")
-      .update({ password: hashPass })
-      .where({ id: tokenData.user_id });
+        .update({ password: hashPass })
+        .where({ id: tokenData.user_id });
       if (!user) {
         res.status(404).json({
           error: true,
@@ -208,6 +244,7 @@ module.exports.resetPassword = asyncHandler(async (req, res) => {
       });
     }
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       error: true,
       message: "Something went wrong!!",

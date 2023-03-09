@@ -12,6 +12,7 @@ const createBubble = asyncHandler(async (req, res) => {
         data: result,
       });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       error: true,
       message: "Something went wrong!!",
