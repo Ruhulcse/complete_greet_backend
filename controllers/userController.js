@@ -217,6 +217,13 @@ module.exports.resetPassword = asyncHandler(async (req, res) => {
         data: null,
       });
     }
+    if (!checkPasswordFormat(new_password)) {
+      res.status(500).json({
+        error: true,
+        message: "Please fillup all criteria of password!",
+        data: null,
+      });
+    }
     const hashPass = await hashPassword(new_password);
     if (reset_link) {
       const tokenData = await jwt.decode(reset_link);
@@ -269,6 +276,34 @@ module.exports.getUser = asyncHandler(async (req, res) => {
       message: "User Retrive Successfully",
       data: users,
     });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Something went wrong!!",
+      data: null,
+    });
+  }
+});
+
+// Greet Msg Update
+module.exports.greetMsgUpdate = asyncHandler(async (req, res) => {
+  try {
+    const { body, user } = req;
+    if (body.greet_msg !== "") {
+      const users = await knex("Users")
+        .update({ greet_msg: body.greet_msg })
+        .where({ id: user.user_id });
+
+      res.json({
+        error: false,
+        message: "User Update Successfully",
+        data: users,
+      });
+    }
+    return res
+      .status(400)
+      .json({ error: true, message: "User update failed!", data: null });
   } catch (error) {
     console.error(error);
     res.status(500).json({

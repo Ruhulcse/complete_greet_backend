@@ -20,10 +20,10 @@ module.exports.comparePassword = function (password, hash) {
   }
 };
 
-module.exports.checkPasswordFormat = function (string) {
-  const upper = /[A-Z]/.test(string);
-  const lower = /[a-z]/.test(string);
-  const number = /\d/.test(string);
+module.exports.checkPasswordFormat = function (password) {
+  const upper = /[A-Z]/.test(password);
+  const lower = /[a-z]/.test(password);
+  const number = /\d/.test(password);
 
-  return upper && lower && number;
+  return password.length >= 6 && upper && lower && number;
 };

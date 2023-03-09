@@ -6,6 +6,7 @@ const {
   getUser,
   forgotPassword,
   resetPassword,
+  greetMsgUpdate,
 } = require("../controllers/userController");
 
 router.post("/register", registration);
@@ -14,5 +15,6 @@ router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
 
 router.get("/api/v1/get-user", getUser);
+router.patch("/api/v1/greet-msg-update", greetMsgUpdate);
 
 module.exports = router;

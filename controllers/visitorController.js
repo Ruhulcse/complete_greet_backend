@@ -5,7 +5,6 @@ const knex = require("../db/db");
 module.exports.addVisitor = asyncHandler(async (req, res) => {
   try {
     const { body, user } = req;
-    console.log("🚀 ~ file: visitorController.js:9 ~ module.exports.addVisitor=asyncHandler ~ body:", body)
     const payload = {
       ...body,
       user_id: user.user_id,
