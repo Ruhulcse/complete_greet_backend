@@ -106,6 +106,28 @@ const editBubble = asyncHandler(async (req, res) => {
   }
  
 });
+//delete bubble video 
+const deleteBubble = asyncHandler(async(req,res)=>{
+  const bubble_id = req.params.id;
+  try {
+    await knex('Bubbles').update({is_deleted:1}).where({
+      id: bubble_id,
+      is_deleted:0
+    })
+    res.status(201).json({
+      error: false,
+      message: "successfully bubble deleted",
+      data: req.params,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Something went wrong!!",
+      data: null,
+    });
+  }
+})
 const generateBubbleCreatePayload = (req) => {
   // console.log(req.user)
   const {
@@ -200,4 +222,5 @@ module.exports = {
   uploadVideo,
   createBubble,
   editBubble,
+  deleteBubble
 };
