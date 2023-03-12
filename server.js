@@ -10,6 +10,8 @@ const routes = require("./routes");
 const auth = require("./middlewares/auth");
 require("dotenv").config();
 
+// Serve static files from the public directory
+app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
@@ -22,6 +24,12 @@ app.use(errorHandler);
 
 app.get("/", function (req, res) {
   res.send("Backend is running successfully....");
+});
+
+// Define a route for your HTML content
+app.get('/my-html-content', (req, res) => {
+  console.log("api called")
+  res.sendFile(__dirname + '/public/my-html-content.html');
 });
 
 const PORT = process.env.PORT || 5000;
