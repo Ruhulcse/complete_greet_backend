@@ -9,7 +9,11 @@
 
    <!-- Link to CSS file-->
    <link rel="stylesheet" href="./index.css" />
-   <script>window.CompleteGreet_ID="eb382bcb-d521-5ee9-9477-3177d5b4778c";(function (s, a, l, u, t, e) {t = a.createElement(l),e = a.getElementsByTagName(l)[0];t.async = 1;t.src = u;e.parentNode.insertBefore(t, e)})(window, document, 'script', 'https://completegreet.com/js/CompleteGreetInstallation.js');</script>
+   <script dangerouslySetInnerHTML={{ __html: `window.CompleteGreet_ID="63ba9476-12b8-57de-83fe-e38809d8bab3" ;(function
+      (s, a, l, u, t, e)
+      {t=a.createElement(l),e=a.getElementsByTagName(l)[0];t.async=1;t.src=u;e.parentNode.insertBefore(t, e)})(window,
+      document, 'script' , 'https://completegreet.com/js/CompleteGreetInstallation.js' );`, }}></script>
+   <!-- <script>window.CompleteGreet_ID="eb382bcb-d521-5ee9-9477-3177d5b4778c";(function (s, a, l, u, t, e) {t = a.createElement(l),e = a.getElementsByTagName(l)[0];t.async = 1;t.src = u;e.parentNode.insertBefore(t, e)})(window, document, 'script', 'https://completegreet.com/js/CompleteGreetInstallation.js');</script> -->
 </head>
 
 <body>
@@ -27,11 +31,6 @@
       integrity="sha512-AI5A3zIoeRSEEX9z3Vyir8NqSMC1pY7r5h2cE+9J6FLsoEmSSGLFaqMQw8SWvoONXogkfFrkQiJfLeHLz3+HOg=="
       crossorigin="anonymous" referrerpolicy="no-referrer"></script>
    <script>
-      function printMessage(e) {
-         e.preventDefault();
-         console.log(message.value);
-         socket.emit('message', message.value);
-      }
       const button = document.querySelector('button');
       button.addEventListener('click', printMessage);
       const notify = document.querySelector('#notification');
@@ -39,6 +38,11 @@
       const messageBar = document.querySelector('#message-bar');
 
       const socket = io('http://localhost:5000');
+      function printMessage(e) {
+         e.preventDefault();
+         console.log(message.value);
+         socket.emit('message', message.value);
+      }
       // socket.on('greeting-from-server', function (message) {
       //    document.body.appendChild(
       //       document.createTextNode(message.greeting)
