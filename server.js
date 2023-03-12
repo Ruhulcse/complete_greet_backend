@@ -6,6 +6,7 @@ const cors = require("cors");
 const logger = require("morgan");
 const helmet = require("helmet");
 const errorHandler = require("./middlewares/errors");
+const socket = require("./socket");
 const routes = require("./routes");
 const auth = require("./middlewares/auth");
 require("dotenv").config();
@@ -31,25 +32,4 @@ server.listen(
 );
 
 // socket connection
-io.on("connection", function (socket) {
-  console.log(`⚡: ${socket.id} user just connected`);
-  socket.emit("greeting-from-server", {
-    greeting: "Hello Client",
-  });
-  socket.on("greeting-from-client", function (message) {
-    console.log(message);
-  });
-
-  //Whenever someone disconnects this piece of code executed
-  socket.on("disconnect", function () {
-    console.log("A user disconnected", socket.id);
-  });
-
-  socket.on("message", (data) => {
-    //sends the data to everyone except you.
-    socket.broadcast.emit("response", data);
-
-    //sends the data to everyone connected to the server
-    // socket.emit("response", data)
-  });
-});
+socket(io);
