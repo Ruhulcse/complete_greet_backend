@@ -128,6 +128,48 @@ const deleteBubble = asyncHandler(async(req,res)=>{
     });
   }
 })
+//get all bubble for a user 
+const getAllBubble = asyncHandler(async(req,res)=>{
+  try {
+    const bubbleData = await knex('Bubbles').select().where({
+      user_id: req.user.user_id,
+      is_deleted:0
+    })
+    res.status(201).json({
+      error: false,
+      message: "successfully bubble get",
+      data: bubbleData
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: true,
+      message: "Something went wrong!!",
+      data: null,
+    });
+  }
+})
+//get single bubble for a user 
+const getSingleBubble = asyncHandler(async(req,res)=>{
+  try {
+    const bubbleData = await knex('Bubbles').select().where({
+      user_id: req.user.user_id,
+      bubble_code: req.params.bubble_code,
+      is_deleted:0
+    })
+
+    res.status(201).json({
+      error: false,
+      message: "successfully bubble get",
+      data: bubbleData
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: true,
+      message: "Something went wrong!!",
+      data: null,
+    });
+  }
+})
 const generateBubbleCreatePayload = (req) => {
   // console.log(req.user)
   const {
@@ -222,5 +264,7 @@ module.exports = {
   uploadVideo,
   createBubble,
   editBubble,
-  deleteBubble
+  deleteBubble,
+  getAllBubble,
+  getSingleBubble
 };
